@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de tâches</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>📝 Gestionnaire de tâches</h1>
+    </header>
+
+    <main>
+        <div class="bloc">
+            <button id="ajouter">Ajouter</button>
+        </div>
+
+
+        <form action="" class="bloc cache">
+            <!-- <input type="hidden" id="idtache" value=""> -->
+            <label for="">Titre</label>
+            <input type="text" id="titre" placeholder="ex: Réviser le js">
+
+            <label for="">Description</label>
+            <textarea name="decription" id="decription" rows="3" placeholder="Détail tâche"></textarea>
+
+            <label for="">Statut</label>
+            <select name="" id="statut">
+                <option value="à faire">a faire</option>
+                <option value="en cours">en cours</option>
+                <option value="terminé">terminé</option>
+                <option value="bloquée">bloquée</option>
+            </select>
+
+            <button type="submit" id="btn-valider">Ajouter</button>
+            <button type="reset" id="btn-reset">Annuler</button>
+        </form>
+
+        <div class="bloc" id="filtres">
+            <button class="filtre actif" data-statut="toutes">Toutes</button>
+            <button class="filtre" data-statut="à faire">A faire</button>
+            <button class="filtre" data-statut="en cours">En cours</button>
+            <button class="filtre" data-statut="terminé">Terminé</button>
+            <button class="filtre" data-statut="bloquée">Bloquée</button>
+
+            <div id="stats">
+                Total: 5 | En cours: 2 | A faire: 0 | Terminée: 2 | Bloquée: 1
+            </div>
+        </div>
+
+        <div class="bloc" id="liste">
+            <!-- en js -->
+            <div class="carte">
+                <h3>Réviser le js</h3>
+                <span>En cours</span>
+                <p>description tâche</p>
+                <p>
+                    Crée le 10/10/2000
+                </p>
+                <button>Modifier</button>
+                <button>Supprimer</button>
+            </div>
+        </div>
+
+    </main>
+</body>
+
+</html>

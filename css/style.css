@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: rgb(239, 233, 233);
+}
+
+header {
+  text-align: center;
+  background-color: rgb(17, 17, 67);
+  color: white;
+  padding: 10px;
+}
+
+main {
+  max-width: 850px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+.bloc {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.717);
+}
+
+label {
+  display: block;
+  margin: 10px 0 2px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid gray;
+}
+
+button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(59, 59, 135);
+  color: white;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+form button {
+  margin-top: 15px;
+}
+
+.cache {
+  display: none;
+}
+
+.filtre {
+  background-color: aliceblue;
+  color: rgb(59, 59, 135);
+}
+
+.filtre.actif {
+  background-color: rgb(59, 59, 135);
+  color: white;
+}
+
+#stats {
+  margin-top: 10px;
+  color: gray;
+}
+
+#liste {
+  /* display: flex;
+  flex-wrap: wrap;
+  gap: 15px; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.carte {
+  background-color: rgba(239, 234, 234, 0.547);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.717);
+  border-left: 7px solid green;
+}
+
+.carte span {
+  background-color: green;
+  padding: 5px;
+  border-radius: 15px;
+}
