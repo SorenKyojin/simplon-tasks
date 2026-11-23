@@ -1,25 +1,85 @@
-const boutonAjouter = document.getElementById("ajouter");
-const formulaireAjouter = document.getElementById("form");
+const byId = (id) => document.getElementById(id);
 
-let titre=document.getElementById("titre");
-let description=document.getElementById("description");
-let statut=document.getElementById("statut");
+const boutonAjouter = byId("ajouter");
+const form = byId("form");
 
-boutonAjouter.addEventListener ('click', (e) => {
-    formulaireAjouter.classList.toggle('cache');
+let champTitre = byId("titre");
+let champDescription = byId("description");
+let champStatut = byId("statut");
+let erreur = byId("erreur");
+
+const STATUTS = {
+  "à faire": "bleu",
+  "en cours": "orange",
+  terminé: "vert",
+  bloquée: "rouge",
+};
+
+const TACHE_STORAGE = "tache";
+let taches = [];
+
+function saveToStorage() {
+  localStorage.setItem(TACHE_STORAGE, JSON.stringify(taches));
+}
+
+function loadStorage() {
+  taches = JSON.parse(localStorage.getItem(TACHE_STORAGE)) || [];
+}
+
+boutonAjouter.addEventListener("click", (e) => {
+  form.classList.toggle("cache");
 });
 
-formulaireAjouter.addEventListener("submit", (e)=>{
-    e.preventDefault()
-    let titre1 = titre.value;
-    let description1 = description.value;
-    let statut1 = statut.value;
-    
-    console.log(titre1);
-    console.log(description1);
-    console.log(statut1);
-    
+byId("btn-reset").addEventListener("click", resetForm);
 
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  let titre = champTitre.value;
+  let description = champDescription.value || "Pas de description";
+  let statut = champStatut.value;
 
+  const message = valider(titre, statut);
+  if (message !== "") {
+    erreur.classList.add("erreur");
+    erreur.textContent = message;
+    return;
+  }
+
+  ajouterTache(titre, description, statut);
+  //   modifierTache(titre, description, statut);
+
+  saveToStorage();
+  resetForm();
+});
+
+function resetForm() {
+  form.reset();
+  form.classList.toggle("cache");
+  erreur.classList.remove("erreur");
+  erreur.textContent = "";
 }
-);
+
+function ajouterTache(titre, description, statut) {
+  const tache = {
+    id: Date.now(),
+    titre,
+    description,
+    statut,
+    createdAt: new Date().toISOString(),
+    couleur: STATUTS[statut],
+  };
+
+  taches.push(tache);
+}
+
+function valider(titre, statut) {
+  if (titre.trim() === "") return "Le titre est obligatoire !";
+
+  if (!(statut in STATUTS)) return "Le statut n'existe pas valide !";
+
+  return "";
+}
+
+// charger les tâches au chargement de la page!
+loadStorage();
+console.log(taches);
