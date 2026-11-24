@@ -12,6 +12,7 @@ let erreur = byId("erreur");
 let liste = byId("liste");
 let btnFiltres = document.querySelectorAll("#filtres button");
 let filtreSatut = "toutes";
+let idTacheEnDep = null;
 
 const STATUTS = {
   "à faire": "#3498db",
@@ -89,9 +90,9 @@ function modifierTache(id, titre, description, statut) {
 }
 
 function createCarte(tache) {
-  let div = createElem("div");
-  div.classList.add("carte");
-  div.style.borderLeft = `5px solid  ${tache.couleur}`;
+  let carte = createElem("div");
+  carte.classList.add("carte");
+  carte.style.borderLeft = `5px solid  ${tache.couleur}`;
 
   let h3 = createElem("h3", tache.titre);
   let span = createElem("span", tache.statut);
@@ -114,9 +115,61 @@ function createCarte(tache) {
     if (confirm("Voulez-vous supprimer cette tâche ?")) supprimer(tache.id);
   });
 
-  div.append(h3, span, p, pDate, btnModif, btnSup);
+  carte.append(h3, span, p, pDate, btnModif, btnSup);
 
-  return div;
+  dragAndDrop(carte, tache);
+
+  return carte;
+}
+
+function echangerTache(source, cible) {
+  let indexSource = taches.findIndex((t) => t.id == source);
+  let indexCible = taches.findIndex((t) => t.id == cible);
+
+  if (indexSource == -1 || indexCible == -1 || indexCible == indexSource)
+    return;
+
+  const tachedeplace = taches.splice(indexSource, 1)[0];
+  taches.splice(indexCible, 0, tachedeplace);
+}
+
+function dragAndDrop(carte, tache) {
+  carte.draggable = true;
+
+  // Début du déplacement
+  carte.addEventListener("dragstart", (e) => {
+    idTacheEnDep = tache.id;
+
+    carte.classList.add("carteMove");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(tache.id));
+  });
+
+  // Survold'une carte pendant le déplacement
+  carte.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    if (idTacheEnDep !== tache.id) {
+      carte.classList.add("survole");
+    }
+  });
+
+  // Dépôt sur cette carte - échange - sauvegarde - réaffiche
+  carte.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    carte.classList.remove("survole");
+    if (idTacheEnDep !== null) {
+      echangerTache(tache.id, idTacheEnDep);
+      saveToStorage();
+      afficherTache();
+    }
+  });
+
+  // Fin du déplacement (déposé ou annulé)
+  carte.addEventListener("dragend", (e) => {
+    carte.classList.remove("carteMove");
+    idTacheEnDep = null;
+  });
 }
 
 // FILTERS
