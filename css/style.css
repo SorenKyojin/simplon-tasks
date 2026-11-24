@@ -111,3 +111,7 @@ form button {
 .carte button {
   margin: 5px;
 }
+
+.bg-danger {
+  background-color: chocolate;
+}

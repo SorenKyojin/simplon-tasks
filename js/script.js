@@ -7,8 +7,11 @@ const form = byId("form");
 let champTitre = byId("titre");
 let champDescription = byId("description");
 let champStatut = byId("statut");
+let champId = byId("idtache");
 let erreur = byId("erreur");
 let liste = byId("liste");
+let btnFiltres = document.querySelectorAll("#filtres button");
+let filtreSatut = "toutes";
 
 const STATUTS = {
   "à faire": "#3498db",
@@ -37,6 +40,7 @@ byId("btn-reset").addEventListener("click", resetForm);
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+  let id = champId.value;
   let titre = champTitre.value;
   let description = champDescription.value || "Pas de description";
   let statut = champStatut.value;
@@ -48,8 +52,11 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  ajouterTache(titre, description, statut);
-  //   modifierTache(titre, description, statut);
+  if (id) {
+    modifierTache(id, titre, description, statut);
+  } else {
+    ajouterTache(titre, description, statut);
+  }
 
   saveToStorage();
   resetForm();
@@ -60,6 +67,25 @@ function supprimer(id) {
   taches = taches.filter((tache) => tache.id !== id);
   saveToStorage();
   afficherTache();
+}
+
+function modifier(tache) {
+  form.classList.remove("cache");
+  champTitre.value = tache.titre;
+  champId.value = tache.id;
+  champDescription.value = tache.description;
+  champStatut.value = tache.statut;
+}
+
+function modifierTache(id, titre, description, statut) {
+  const tache = taches.find((t) => t.id == id);
+
+  if (tache) {
+    tache.titre = titre;
+    tache.description = description;
+    tache.statut = statut;
+    tache.couleur = STATUTS[statut];
+  }
 }
 
 function createCarte(tache) {
@@ -78,18 +104,52 @@ function createCarte(tache) {
 
   let btnModif = createElem("button", "Modifier");
   let btnSup = createElem("button", "Supprimer");
+  btnSup.classList.add("bg-danger");
 
   btnModif.addEventListener("click", () => {
-    console.log("modif tache : ", tache.id);
+    modifier(tache);
   });
 
   btnSup.addEventListener("click", () => {
-    supprimer(tache.id);
+    if (confirm("Voulez-vous supprimer cette tâche ?")) supprimer(tache.id);
   });
 
   div.append(h3, span, p, pDate, btnModif, btnSup);
 
   return div;
+}
+
+// FILTERS
+btnFiltres.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    btnFiltres.forEach((btn) => {
+      btn.classList.remove("actif");
+    });
+
+    btn.classList.add("actif");
+    filtreSatut = btn.dataset.statut;
+    afficherTache();
+  });
+});
+
+function tachesAffichees() {
+  return taches.filter((tache) => {
+    // filtre par statut
+    const statut = filtreSatut === "toutes" || tache.statut === filtreSatut;
+    return statut;
+  });
+}
+
+function afficherTache() {
+  liste.innerHTML = "";
+
+  const tachesAaffichees = tachesAffichees();
+
+  tachesAaffichees.forEach((tache) => {
+    liste.append(createCarte(tache));
+  });
+
+  stats();
 }
 
 function createElem(elem, content = "") {
@@ -99,12 +159,16 @@ function createElem(elem, content = "") {
   return el;
 }
 
-function afficherTache() {
-  liste.innerHTML = "";
+function stats() {
+  const nombreByStatus = [];
 
-  taches.forEach((tache) => {
-    liste.append(createCarte(tache));
-  });
+  for (let statut in STATUTS) {
+    const nbr = taches.filter((tache) => tache.statut === statut).length;
+    nombreByStatus.push(statut + ": " + nbr);
+  }
+
+  byId("stats").textContent =
+    `Total: ${taches.length} | ${nombreByStatus.join(" | ")}`;
 }
 
 function resetForm() {
@@ -138,5 +202,3 @@ function valider(titre, statut) {
 // charger les tâches au chargement de la page!
 loadStorage();
 afficherTache();
-
-console.log(loadStorage()[0].couleur);
